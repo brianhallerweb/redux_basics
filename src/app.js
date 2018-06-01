@@ -1,38 +1,11 @@
-import { createStore } from "redux";
+import { store } from "./store";
+import { incrementCount, decrementCount } from "./actions/counterActions";
+import { addTodo } from "./actions/todoActions";
 
-//Actions
-const incrementCount = () => ({
-  type: "INCREMENT"
-});
-
-const decrementCount = () => ({
-  type: "DECREMENT"
-});
-
-//Reducer
-const countReducer = (state = { count: 0 }, action) => {
-  switch (action.type) {
-    case "INCREMENT":
-      return {
-        count: state.count + 1
-      };
-    case "DECREMENT":
-      return {
-        count: state.count - 1
-      };
-
-    default:
-      return state;
-  }
-};
-
-//Store
-const store = createStore(countReducer);
-
-//App
+// rendering the counter
 store.subscribe(() => {
   const state = store.getState();
-  document.getElementById("count").innerText = state.count;
+  document.getElementById("count").innerText = state.count.count;
 });
 
 document.getElementById("plus").addEventListener("click", () => {
@@ -41,4 +14,22 @@ document.getElementById("plus").addEventListener("click", () => {
 
 document.getElementById("minus").addEventListener("click", () => {
   store.dispatch(decrementCount());
+});
+
+// rendering the todo list
+store.subscribe(() => {
+  const state = store.getState();
+  const todosUl = document.getElementById("todosList");
+  todosUl.innerHTML = "";
+
+  for (let i = 0; i <= state.todos.todos.length - 1; i++) {
+    const todoLi = document.createElement("li");
+    todoLi.textContent = state.todos.todos[i];
+    todosUl.appendChild(todoLi);
+  }
+});
+
+document.getElementById("addTodo").addEventListener("click", () => {
+  const todo = document.getElementById("todoText").value.trim();
+  if (todo) store.dispatch(addTodo(todo));
 });
